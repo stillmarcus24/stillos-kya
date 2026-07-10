@@ -1,0 +1,23 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.stillmarcus24/stillos-kya",
+  "description": "Know Your Agent (KYA): screen a counterparty agent before you pay it — fail-closed CLEAR/REVIEW/BLOCK from OFAC SDN + on-chain wallet signals, signed receipt.",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/stillmarcus24/stillos-kya",
+    "source": "github"
+  },
+  "homepage": "https://nolawealthfinancial.com/notary",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "stillos-kya",
+      "version": "0.1.0",
+      "transport": { "type": "stdio" },
+      "runtimeHint": "npx",
+      "runtimeArguments": [
+        { "type": "positional", "value": "mcp", "description": "run as MCP stdio server" }
+      ]
+    }
+  ]
+}
