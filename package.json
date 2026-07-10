@@ -1,6 +1,7 @@
 {
   "name": "stillos-kya",
-  "version": "0.2.0",
+  "version": "0.2.1",
+  "mcpName": "io.github.stillmarcus24/stillos-kya",
   "description": "Know Your Agent (KYA): drop-in counterparty trust check for agent-to-agent commerce. Returns a fail-closed CLEAR | REVIEW | BLOCK verdict (OFAC SDN screen + live on-chain wallet signals) with an Ed25519-signed receipt. Gate any transaction on it before you pay a counterparty agent.",
   "main": "index.cjs",
   "types": "index.d.ts",
