@@ -1,8 +1,8 @@
 {
   "name": "stillos-kya",
-  "version": "0.2.1",
+  "version": "0.4.2",
   "mcpName": "io.github.stillmarcus24/stillos-kya",
-  "description": "Know Your Agent (KYA): drop-in counterparty trust check for agent-to-agent commerce. Returns a fail-closed CLEAR | REVIEW | BLOCK verdict (OFAC SDN screen + live on-chain wallet signals) with an Ed25519-signed receipt. Gate any transaction on it before you pay a counterparty agent.",
+  "description": "Counterparty due-diligence infrastructure for agent-native commerce. A single call returns a CLEAR / REVIEW / BLOCK compliance determination, combining OFAC sanctions-list screening with live on-chain wallet risk signals — engineered fail-closed so no transaction settles without a verdict. Signed compliance receipts available on the institutional tier for audit-trail purposes.",
   "main": "index.cjs",
   "types": "index.d.ts",
   "keywords": [
@@ -22,7 +22,7 @@
   ],
   "author": "StillOS / NolaWealth",
   "license": "MIT",
-  "homepage": "https://nolawealthfinancial.com/notary",
+  "homepage": "https://stillosdigitalholdings.com/notary",
   "engines": {
     "node": ">=18"
   },
@@ -36,5 +36,9 @@
   ],
   "bin": {
     "stillos-kya": "bin.cjs"
+  },
+  "optionalDependencies": {
+    "x402-fetch": "^1.2.0",
+    "viem": "^2.21.26"
   }
 }

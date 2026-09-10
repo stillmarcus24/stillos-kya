@@ -1,23 +1,35 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.stillmarcus24/stillos-kya",
-  "description": "KYA: fail-closed CLEAR/REVIEW/BLOCK counterparty screen (OFAC + on-chain), signed receipt.",
-  "version": "0.2.1",
+  "description": "Counterparty due-diligence infrastructure: OFAC screening, on-chain risk, signed verdicts.",
+  "version": "0.4.1",
   "repository": {
     "url": "https://github.com/stillmarcus24/stillos-kya",
     "source": "github"
   },
-  "homepage": "https://nolawealthfinancial.com/notary",
+  "homepage": "https://stillosdigitalholdings.com/notary",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "stillos-kya",
-      "version": "0.2.1",
-      "transport": { "type": "stdio" },
+      "version": "0.4.1",
+      "transport": {
+        "type": "stdio"
+      },
       "runtimeHint": "npx",
       "runtimeArguments": [
-        { "type": "positional", "value": "mcp", "description": "run as MCP stdio server" }
+        {
+          "type": "positional",
+          "value": "mcp",
+          "description": "run as MCP stdio server"
+        }
       ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://stillos-kya-edge.stillos.workers.dev/mcp"
     }
   ]
 }
