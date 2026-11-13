@@ -1,6 +1,6 @@
 {
   "name": "stillos-kya",
-  "version": "0.4.2",
+  "version": "0.4.4",
   "mcpName": "io.github.stillmarcus24/stillos-kya",
   "description": "Counterparty due-diligence infrastructure for agent-native commerce. A single call returns a CLEAR / REVIEW / BLOCK compliance determination, combining OFAC sanctions-list screening with live on-chain wallet risk signals — engineered fail-closed so no transaction settles without a verdict. Signed compliance receipts available on the institutional tier for audit-trail purposes.",
   "main": "index.cjs",

@@ -28,7 +28,13 @@ if (args[0] === 'check') {
       // moment they hit the paywall. Now it reports real detected capability instead.
       const cap = require('./index.cjs').paymentCapability();
       const p = e.payment || {};
-      console.error(`Free-tier limit reached for this run (2 checks/day per agent id).`);
+      // 2026-09-10: both numbers here were hardcoded and both were WRONG. It said
+      // "2 checks/day" when the server limit is 40, and "per agent id" when metering
+      // has been keyed on SOURCE IP since the 2026-07-12 sybil fix. The server already
+      // sends its real `used`/`free_limit_per_day` in the 402 body (e.raw) — print
+      // that instead of a client-side copy that goes stale on every server change.
+      const lim = (e.raw && e.raw.free_limit_per_day) ?? null;
+      console.error(`Free-tier limit reached${lim != null ? ` (${lim}/day)` : ''}.`);
       console.error(`Next check costs $${e.price ?? '0.25'} ${p.asset_name || 'USDC'} on ${p.network || 'base'} via x402.`);
       if (cap.available) {
         console.error(`Payment support is INSTALLED and ready in this environment.`);
@@ -39,7 +45,15 @@ if (args[0] === 'check') {
       } else {
         console.error(`Payment support is NOT available in this environment: ${cap.reason}`);
       }
-      console.error(`Or wait for the daily reset, or pass a fresh --agent name for a separate budget.`);
+      // Was: "pass a fresh --agent name for a separate budget." That advice stopped
+      // working on 2026-07-12 (quota moved to source IP precisely so a rotated agent
+      // id could not mint a fresh allowance) and we kept shipping it for two months —
+      // handing users a workaround that silently fails at the one moment they had
+      // intent to pay. The server's own 402 carries the real second option instead:
+      // request-trial, no wallet and no signup, which a founder actually reads.
+      const trial = e.raw && e.raw.building_on_this;
+      if (trial) console.error(`Not ready to pay? ${trial.path} with {"agent":"${agent}","contact":"<email>"} — no payment, no signup, a founder reads every one.`);
+      console.error(`Or wait for the daily reset (midnight America/Phoenix).`);
     } else {
       console.error('ERROR:', e.message);
     }

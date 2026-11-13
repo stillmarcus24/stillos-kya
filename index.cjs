@@ -109,8 +109,16 @@ class KyaHttpError extends Error {
   constructor(status, body, opts = {}) {
     const accepts = Array.isArray(body && body.accepts) ? body.accepts : null;
     const price = accepts && accepts[0] ? Number(accepts[0].maxAmountRequired) / 1e6 : null;
+    // The server's own second door, when it offers one: POST /notary/request-trial,
+    // no wallet and no signup. Surfaced in the thrown message because that string is
+    // what an integrator actually reads in a stack trace -- burying it in .raw is the
+    // same as not shipping it (see the remediation note below for the measured cost).
+    const trial = body && body.building_on_this;
     super(status === 402
-      ? `payment required${price != null ? ` ($${price} USDC)` : ''} — free-tier limit reached for this agent id today`
+      ? `payment required${price != null ? ` ($${price} USDC)` : ''} — free-tier limit reached for this source IP today`
+        + (trial && trial.path
+          ? `. Not ready to pay? ${trial.path} with {"agent":"<same id>","contact":"<email>"} — no payment, no signup, a founder reads every one.`
+          : '')
       : `KYA request failed (HTTP ${status}): ${(body && (body.error || body.message)) || 'no detail'}`);
     this.name = 'KyaHttpError';
     this.status = status;
@@ -127,7 +135,24 @@ class KyaHttpError extends Error {
       action: 'configure_payment_capability',
       accepted: ['opts.fetch (payment-capable fetch)', 'opts.account (viem account / signer)', 'opts.wallet (raw hex key — legacy)'],
       note: 'x402-fetch and viem ship as optionalDependencies and are installed by `npm install stillos-kya`. StillOS never receives your key.',
-      free_tier_alternative: 'pass a different opts.agent for a separate daily budget, or wait for the daily reset',
+      // 2026-09-25: was 'pass a different opts.agent for a separate daily budget'.
+      // That advice stopped working on 2026-07-12, when the free-tier quota moved to
+      // source IP precisely so a rotated agent id could NOT mint a fresh allowance
+      // (notary_service_marcus.cjs meterToday()). We kept shipping it for two months --
+      // coaching integrators off our own paywall at the one moment they had intent to
+      // pay, with a workaround that silently fails.
+      // Measured cost, not hypothetical: one real adopter (Alibaba Cloud, ALICLOUD-JP,
+      // stillos-kya 0.3.2 -> 0.3.4) hit this wall 130 times between 2026-08-01 and
+      // 2026-09-15, rotated its agent id 12 seconds after the first 402 exactly as
+      // instructed here, got walled again, and stopped calling. Over the same window
+      // /request-trial received zero external submissions.
+      // bin.cjs was corrected; this library path -- the one every programmatic
+      // integrator uses -- was not. That asymmetry is what this fixes.
+      free_tier_alternative: (trial && trial.path)
+        ? `${trial.path} with {"agent":"<same id>","contact":"<email>"} — no payment, no signup, a founder reads every one and grants extended free tiers to real integrators`
+        : 'wait for the daily reset (midnight America/Phoenix)',
+      request_trial: trial || null,
+      contact: 'stillmarcus24@gmail.com',
     } : null;
   }
 }
